@@ -74,8 +74,8 @@ class AmokExpectation
   }
   
   public function with($args) {
-    $this->arguments = func_get_args();
-    $this->_arg_hash = md5(print_r(func_get_args(),true));
+    $this->arguments = $this->_recusiveSort(func_get_args());
+    $this->_arg_hash = $this->_hashArguments($this->arguments);
     return $this;
   }
   
@@ -128,7 +128,7 @@ class AmokExpectation
     if($only_non_matched && is_numeric($this->_times) && $this->_matched) {
       return false;
     }
-    if($this->_function == $function && $this->_arg_hash == md5(print_r($args,true))) {
+    if($this->_function == $function && $this->_arg_hash == $this->_hashArguments($args)) {
       $this->_number_of_calls++;
       if($this->_times == 'any' || $this->_number_of_calls == $this->_times) {
         $this->_matched = true;
@@ -144,6 +144,25 @@ class AmokExpectation
   public function hasBeenMatched()
   {
     return $this->_matched;
+  }
+  
+  private function _hashArguments($args) {
+    foreach($args as $key => $value) {
+      if(is_array($value)) {
+        $args[$key] = $this->_recusiveSort($value);
+      }
+    }
+    return md5(print_r($args,true));
+  }
+  
+  private function _recusiveSort($array) {
+    sort($array);
+    foreach($array as $key => $item) {
+      if(is_array($item)) {
+        $array[$key] = $this->_recusiveSort($item);
+      }
+    }
+    return $array;
   }
 }
 

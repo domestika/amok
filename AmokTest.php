@@ -40,6 +40,18 @@ class AmokTest extends PHPUnit_Framework_TestCase
     
   }
   
+  public function test_mock_should_respect_order_of_arguments() {
+    $my_mock = new Amok('Thingy');
+    $my_mock->expects('some_call')->with(1,2)->returns(200);
+    
+    try {
+      $my_mock->some_call(2,1);
+      $this->fail();
+    } catch(AmokNoMatchException $e) {
+      $this->assertTrue(true);
+    }
+  }
+  
   public function test_mock_with_no_calls_to_some_call()
   {
     $my_mock = new Amok('Thingy');
@@ -59,7 +71,7 @@ class AmokTest extends PHPUnit_Framework_TestCase
     $my_mock->expects('some_call')->with('23',array(1,2,3,4))->raises(new Exception('This is an error!'));
     
     try {
-      $my_mock->some_call('23',array(1,2,3,4));
+      $my_mock->some_call('23',array(1,3,2,4));
       $this->fail("some_call should raise an exception");
     } catch(Exception $e) {
       $this->assertEquals($e->getMessage(), 'This is an error!');
