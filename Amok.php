@@ -79,9 +79,25 @@ class AmokExpectation
     return $this;
   }
   
-  public function times($number) {
-    $this->_times = $number;
-    if($number <= 0) {
+  public function times($number_or_string) {
+    if(is_numeric($number_or_string)){
+      $this->_times = $number_or_string;
+    } else {
+      switch($number_or_string) {
+        case 'any':
+          $this->_times = 'any';
+          break;
+        case 'never':
+          $this->_times = 0;
+          break;
+        case 'once':
+          $this->_times = 1;
+          break;
+        default:
+          throw new Exception("times doesn't take the parameter $number_or_string");
+      }
+    }
+    if(is_numeric($this->_times) && $this->_times <= 0) {
       $this->_matched = true;
     }
     return $this;
@@ -109,14 +125,14 @@ class AmokExpectation
   
   public function checkMatch($function, $args, $only_non_matched = true)
   {
-    if($only_non_matched && $this->_matched) {
+    if($only_non_matched && is_numeric($this->_times) && $this->_matched) {
       return false;
     }
     if($this->_function == $function && $this->_arg_hash == md5(print_r($args,true))) {
       $this->_number_of_calls++;
-      if($this->_number_of_calls == $this->_times) {
+      if($this->_times == 'any' || $this->_number_of_calls == $this->_times) {
         $this->_matched = true;
-      } else if($this->_number_of_calls > $this->_times) {
+      } else if(is_numeric($this->_times) && $this->_number_of_calls > $this->_times) {
         $this->_matched = false;
         throw new AmokNoMatchException("Function $function with args: ". print_r($args,true) ."\n Was called {$this->_number_of_calls} times, only {$this->_times} calls expected");
       }
