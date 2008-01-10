@@ -45,7 +45,16 @@ class Amok
     foreach($this->_expectations as $expectation) {
       $expectation->checkMatch($function,$arguments,false);
     }    
-    throw new AmokNoMatchException("No match for method $function with args: ". print_r($arguments, true));
+    throw new AmokNoMatchException("No match for method $function with args: ". print_r($arguments, true) . "\nExpectations: {$this->list_expectations()}");
+  }
+  
+  private function list_expectations()
+  {
+    $list = '';
+    foreach($this->_expectations as $expectation) {
+      $list .= "Function {$expectation->get_function()} with arguments: ". print_r($expectation->get_arguments(), true) ."\n";
+    }
+    return $list;
   }
 }
 
@@ -74,8 +83,8 @@ class AmokExpectation
   }
   
   public function with($args) {
-    $this->arguments = $this->_recusiveSort(func_get_args());
-    $this->_arg_hash = $this->_hashArguments($this->arguments);
+    $this->_arguments = $this->_recursiveSort(func_get_args());
+    $this->_arg_hash = $this->_hashArguments($this->_arguments);
     return $this;
   }
   
@@ -149,17 +158,17 @@ class AmokExpectation
   private function _hashArguments($args) {
     foreach($args as $key => $value) {
       if(is_array($value)) {
-        $args[$key] = $this->_recusiveSort($value);
+        $args[$key] = $this->_recursiveSort($value);
       }
     }
     return md5(print_r($args,true));
   }
   
-  private function _recusiveSort($array) {
+  private function _recursiveSort($array) {
     sort($array);
     foreach($array as $key => $item) {
       if(is_array($item)) {
-        $array[$key] = $this->_recusiveSort($item);
+        $array[$key] = $this->_recursiveSort($item);
       }
     }
     return $array;

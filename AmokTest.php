@@ -40,6 +40,31 @@ class AmokTest extends PHPUnit_Framework_TestCase
     
   }
   
+  public function test_mock_should_list_expectations_when_no_match_for_a_method_is_found()
+  {
+    $my_mock = new Amok('Thingy');
+    $my_mock->expects('some_call')->times(2)->with(24)->returns(200);
+        
+    $expected_message = <<<MESSAGE
+No match for method some_other_call with args: Array
+(
+    [0] => 22
+)
+
+Expectations: Function some_call with arguments: Array
+(
+    [0] => 24
+)
+MESSAGE;
+        
+    try {
+      $my_mock->some_other_call(22);    
+      $this->fail();
+    } catch(AmokNoMatchException $e) {
+      $this->assertEquals(trim($e->getMessage()), trim($expected_message));
+    }
+  }
+  
   public function test_mock_should_respect_order_of_arguments() {
     $my_mock = new Amok('Thingy');
     $my_mock->expects('some_call')->with(1,2)->returns(200);
