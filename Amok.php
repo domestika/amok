@@ -54,6 +54,8 @@ class AmokExpectation
     $this->_number_of_calls = 0;
     $this->_raises = false;
     $this->_matched = false;
+    $this->arguments = array();
+    $this->_arg_hash = md5(print_r(array(),true));
   }
   
   public function get_function()

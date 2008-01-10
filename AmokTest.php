@@ -68,6 +68,15 @@ class AmokTest extends PHPUnit_Framework_TestCase
     
     $this->assertTrue($my_mock->verify());
   }
+  
+  public function test_mock_with_expectation_with_no_args_specified() 
+  {
+    $my_mock = new Amok('Thingy');
+    $my_mock->expects('some_call')->returns(array(1,2,3,4));
+
+    $this->assertEquals($my_mock->some_call(),array(1,2,3,4));
+    $this->assertTrue($my_mock->verify());
+  }
 }
 
 ?>
