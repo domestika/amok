@@ -96,7 +96,7 @@ MESSAGE;
     $my_mock->expects('some_call')->with('23',array(1,2,3,4))->raises(new Exception('This is an error!'));
     
     try {
-      $my_mock->some_call('23',array(1,3,2,4));
+      $my_mock->some_call('23',array(1,2,3,4));
       $this->fail("some_call should raise an exception");
     } catch(Exception $e) {
       $this->assertEquals($e->getMessage(), 'This is an error!');
@@ -134,6 +134,37 @@ MESSAGE;
     } catch(AmokNoMatchException $e) {
       $this->assertTrue(true);
     }
+  }
+  
+  public function test_mock_should_handle_array_parameters()
+  {
+    $my_mock = new Amok('Thingy');
+    $my_mock->expects('get')->with('Items.GetList',array(
+    				                    'item_type' => 'Post', 
+    				                    'lang_code' => 'ENG', 
+    				                    'include_info' => '1', 
+    				                    'comments_count' => '1',
+    				                    'page' => '1',
+    				                    'per_page' => '2',
+    				                    'order_by' => 'date_create DESC',
+    				                    'status' => 'A',
+    				                    'include_isets' => '1',
+    				                    'require_lang_code' => 'on',
+    				                  	 'from_date' => '2007-12-01',
+    				                    'to_date' => '2007-12-31 23:59:59'))->returns('test');
+    
+    $this->assertEquals('test',$my_mock->get('Items.GetList', array('item_type' => 'Post', 
+                              				                    'lang_code' => 'ENG',  
+                              				                    'comments_count' => '1',
+                              				                    'page' => '1',
+                              				                    'per_page' => '2',
+                              				                    'include_info' => '1',
+                              				                    'order_by' => 'date_create DESC',
+                              				                    'status' => 'A',
+                              				                    'include_isets' => '1',
+                              				                    'require_lang_code' => 'on',
+                              				                  	 'from_date' => '2007-12-01',
+                              				                    'to_date' => '2007-12-31 23:59:59')));
   }
 }
 

@@ -165,7 +165,7 @@ class AmokExpectation
   }
   
   private function _recursiveSort($array) {
-    sort($array);
+    ksort($array);
     foreach($array as $key => $item) {
       if(is_array($item)) {
         $array[$key] = $this->_recursiveSort($item);
