@@ -28,7 +28,6 @@ class AmokTest extends PHPUnit_Framework_TestCase
       $this->assertTrue(true);
     }
     
-    $this->assertTrue($my_mock->verify());
   }
   
   public function test_mock_with_no_calls_to_some_call()

@@ -37,9 +37,14 @@ class Amok
   function __call($function, $arguments) {
     foreach($this->_expectations as $expectation) {
       if($expectation->checkMatch($function,$arguments)) {
+        
         return $expectation->execute();
       }
     }
+    // No matches - we take another run to see if any method has already been matched
+    foreach($this->_expectations as $expectation) {
+      $expectation->checkMatch($function,$arguments,false);
+    }    
     throw new AmokNoMatchException("No match for method $function with args: ". print_r($arguments, true));
   }
 }
@@ -102,9 +107,9 @@ class AmokExpectation
     return $this->_return_value;
   }
   
-  public function checkMatch($function, $args)
+  public function checkMatch($function, $args, $only_non_matched = true)
   {
-    if($this->_matched) {
+    if($only_non_matched && $this->_matched) {
       return false;
     }
     if($this->_function == $function && $this->_arg_hash == md5(print_r($args,true))) {
