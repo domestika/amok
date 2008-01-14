@@ -166,6 +166,25 @@ MESSAGE;
                               				                  	 'from_date' => '2007-12-01',
                               				                    'to_date' => '2007-12-31 23:59:59')));
   }
+  
+  public function test_verifyAll_should_verify_all_mocks()
+  {
+    Amok::reset();
+    $mock1 = new Amok('Mock 1');
+    $mock2 = new Amok('Mock 2');
+    
+    $mock1->expects('some_call')->with('hello')->returns('world');
+    $mock2->expects('another_call')->with('hej')->returns('med dig');
+    
+    $mock1->some_call('hello');
+    
+    try {
+      Amok::verifyAll();
+      $this->fail();
+    } catch(AmokNoMatchException $e) {
+      $this->assertTrue(strpos($e->getMessage(),'Mock Mock 2 expected another_call')===0);
+    }
+  }
 }
 
 ?>

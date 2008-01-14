@@ -3,11 +3,26 @@
 class Amok
 {
   private $_name, $_expectations;
+  private static $_mocks = array();
+  
+  public static function verifyAll() 
+  {
+    foreach(self::$_mocks as $mock) {
+      $mock->verify();
+    }
+    self::reset();
+  }
+  
+  public static function reset()
+  {
+    self::$_mocks = array();
+  }
   
   public function __construct($name = 'Mock')
   {
     $this->_name = $name;
     $this->_expectations = array();
+    self::$_mocks[] = $this;
   }
   
   public function expects($function) {
