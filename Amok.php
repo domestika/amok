@@ -8,7 +8,12 @@ class Amok
   public static function verifyAll() 
   {
     foreach(self::$_mocks as $mock) {
-      $mock->verify();
+      try {
+        $mock->verify();
+      } catch (Exception $e) {
+        self::reset();
+        throw($e);
+      }
     }
     self::reset();
   }
@@ -60,7 +65,7 @@ class Amok
     foreach($this->_expectations as $expectation) {
       $expectation->checkMatch($function,$arguments,false);
     }    
-    throw new AmokNoMatchException("No match for method $function with args: ". print_r($arguments, true) . "\nExpectations: {$this->list_expectations()}");
+    throw new AmokNoMatchException("{$this->_name}: No match for method $function with args: ". print_r($arguments, true) . "\nExpectations: {$this->list_expectations()}");
   }
   
   private function list_expectations()

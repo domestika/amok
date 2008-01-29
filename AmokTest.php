@@ -2,7 +2,7 @@
 require 'Amok.php';
 
 class AmokTest extends PHPUnit_Framework_TestCase
-{
+{ 
   public function test_mock_with_2_calls_to_some_call()
   {
     $my_mock = new Amok('Thingy');
@@ -46,7 +46,7 @@ class AmokTest extends PHPUnit_Framework_TestCase
     $my_mock->expects('some_call')->times(2)->with(24)->returns(200);
         
     $expected_message = <<<MESSAGE
-No match for method some_other_call with args: Array
+Thingy: No match for method some_other_call with args: Array
 (
     [0] => 22
 )
@@ -184,6 +184,9 @@ MESSAGE;
     } catch(AmokNoMatchException $e) {
       $this->assertTrue(strpos($e->getMessage(),'Mock Mock 2 expected another_call')===0);
     }
+    
+    // Verify all should reset Amok
+    Amok::verifyAll();
   }
 }
 
