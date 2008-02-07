@@ -74,7 +74,11 @@ class Amok
   {
     $list = '';
     foreach($this->_expectations as $expectation) {
-      $list .= "Function {$expectation->get_function()} with arguments: ". print_r($expectation->get_arguments(), true) ."\n";
+      if(is_null($expectation->get_arguments())) {
+        $list .= "Function {$expectation->get_function()} with any arguments\n";
+      } else {
+        $list .= "Function {$expectation->get_function()} with arguments: ". print_r($expectation->get_arguments(), true) ."\n";        
+      }
     }
     return $list;
   }
@@ -90,7 +94,7 @@ class AmokExpectation
     $this->_number_of_calls = 0;
     $this->_raises = false;
     $this->_matched = false;
-    $this->arguments = array();
+    $this->arguments = null;
     $this->_arg_hash = null;
   }
   
