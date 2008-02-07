@@ -51,6 +51,7 @@ class Amok
     foreach($no_matches as $expectation) {
       $error .= "Mock {$this->_name} expected {$expectation->get_function()} with arguments: ". print_r($expectation->get_arguments(), true). "\n";
     }
+    Amok::reset();
     throw new AmokNoMatchException($error);
   }
   
@@ -64,7 +65,8 @@ class Amok
     // No matches - we take another run to see if any method has already been matched
     foreach($this->_expectations as $expectation) {
       $expectation->checkMatch($function,$arguments,false);
-    }    
+    }
+    Amok::reset();
     throw new AmokNoMatchException("{$this->_name}: No match for method $function with args: ". print_r($arguments, true) . "\nExpectations: {$this->list_expectations()}");
   }
   
@@ -89,7 +91,7 @@ class AmokExpectation
     $this->_raises = false;
     $this->_matched = false;
     $this->arguments = array();
-    $this->_arg_hash = md5(print_r(array(),true));
+    $this->_arg_hash = null;
   }
   
   public function get_function()
@@ -157,7 +159,7 @@ class AmokExpectation
     if($only_non_matched && is_numeric($this->_times) && $this->_matched) {
       return false;
     }
-    if($this->_function == $function && $this->_arg_hash == $this->_hashArguments($args)) {
+    if($this->_function == $function && (is_null($this->_arg_hash) || $this->_arg_hash == $this->_hashArguments($args))) {
       $this->_number_of_calls++;
       if($this->_times == 'any' || $this->_number_of_calls == $this->_times) {
         $this->_matched = true;

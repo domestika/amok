@@ -167,6 +167,14 @@ MESSAGE;
                               				                    'to_date' => '2007-12-31 23:59:59')));
   }
   
+  public function test_mock_with_no_parameter_expectation_set()
+  {
+    $my_mock = new Amok('Thingy');
+    $my_mock->expects('some_method')->returns('Helo');
+    
+    $this->assertEquals('Helo',$my_mock->some_method(1,2,3,4,5,6,7));
+  }
+  
   public function test_verifyAll_should_verify_all_mocks()
   {
     Amok::reset();
