@@ -49,7 +49,11 @@ class Amok
     }
     $error = "";
     foreach($no_matches as $expectation) {
-      $error .= "Mock {$this->_name} expected {$expectation->get_function()} with arguments: ". print_r($expectation->get_arguments(), true). "\n";
+      if(is_null($expectation->get_arguments())) {
+        $error .= "Mock {$this->_name} expected {$expectation->get_function()} with any arguments";
+      } else {
+        $error .= "Mock {$this->_name} expected {$expectation->get_function()} with arguments: ". print_r($expectation->get_arguments(), true). "\n";
+      }
     }
     Amok::reset();
     throw new AmokNoMatchException($error);
@@ -74,11 +78,7 @@ class Amok
   {
     $list = '';
     foreach($this->_expectations as $expectation) {
-      if(is_null($expectation->get_arguments())) {
-        $list .= "Function {$expectation->get_function()} with any arguments\n";
-      } else {
-        $list .= "Function {$expectation->get_function()} with arguments: ". print_r($expectation->get_arguments(), true) ."\n";        
-      }
+      $list .= "Function {$expectation->get_function()} with arguments: ". print_r($expectation->get_arguments(), true) ."\n";        
     }
     return $list;
   }
