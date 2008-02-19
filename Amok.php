@@ -55,7 +55,6 @@ class Amok
         $error .= "Mock {$this->_name} expected {$expectation->get_function()} with arguments: ". print_r($expectation->get_arguments(), true). "\n";
       }
     }
-    Amok::reset();
     throw new AmokNoMatchException($error);
   }
   
@@ -70,7 +69,6 @@ class Amok
     foreach($this->_expectations as $expectation) {
       $expectation->checkMatch($function,$arguments,false);
     }
-    Amok::reset();
     throw new AmokNoMatchException("{$this->_name}: No match for method $function with args: ". print_r($arguments, true) . "\nExpectations: {$this->list_expectations()}");
   }
   
@@ -201,6 +199,13 @@ class AmokExpectation
   }
 }
 
-class AmokNoMatchException extends Exception {}
+class AmokNoMatchException extends Exception {
+  public function __construct($msg, $code = null) {
+    // Make sure all amok expectations are always reset when an
+    //  exceptions occurs
+    Amok::reset();
+    parent::__construct($msg, $code);
+  }
+}
 
 ?>
