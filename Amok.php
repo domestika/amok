@@ -1,5 +1,13 @@
 <?php
 
+ /**
+  * Amok is a simple and easy to use mock for delightful unittesting.
+  * It has no external dependencies and will work with any unittesting
+  * framework. 
+  *
+  * See testAmok.php for examples of usage.
+  *
+  */
 class Amok
 {
   private $_name, $_expectations;
@@ -65,7 +73,6 @@ class Amok
         return $expectation->execute();
       }
     }
-    // No matches - we take another run to see if any method has already been matched
     foreach($this->_expectations as $expectation) {
       $expectation->checkMatch($function,$arguments,false);
     }
@@ -119,6 +126,7 @@ class AmokExpectation
       switch($number_or_string) {
         case 'any':
           $this->_times = 'any';
+          $this->_matched = true;
           break;
         case 'never':
           $this->_times = 0;

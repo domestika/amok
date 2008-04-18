@@ -27,6 +27,14 @@ class AmokTest extends PHPUnit_Framework_TestCase
     $this->assertTrue($my_mock->verify());
   }  
   
+  public function test_mock_with_0_calls_to_some_call_that_expects_to_be_called_any_time()
+  {
+    $my_mock = new Amok('Thingy');
+    $my_mock->expects('some_call')->times('any')->with(24)->returns(200);
+    
+    $this->assertTrue($my_mock->verify());    
+  }
+  
   public function test_mock_with_too_many_calls_to_some_call()
   {
     $my_mock = new Amok('Thingy');
