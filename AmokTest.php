@@ -186,6 +186,19 @@ MESSAGE;
     
     $this->assertEquals('Helo',$my_mock->some_method(1,2,3,4,5,6,7));
   }
+  // We must find a way to validate this kind of expectation
+  // The problem is the order in which the expectations are met
+  public function test_mock_with_mock_parameter() {
+    $my_mock = new Amok('Thingy');
+    $passed_mock = new Amok('More stuff');
+
+    $passed_mock->expects('method');
+    $my_mock->expects('test')->with($passed_mock);
+
+    $passed_mock->method();
+    $my_mock->test($passed_mock);
+    Amok::verifyAll();
+  }
   
   public function test_verifyAll_should_verify_all_mocks()
   {
