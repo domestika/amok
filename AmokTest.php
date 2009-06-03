@@ -188,7 +188,7 @@ MESSAGE;
   }
   // We must find a way to validate this kind of expectation
   // The problem is the order in which the expectations are met
-  public function test_mock_with_mock_parameter() {
+  public function _test_mock_with_mock_parameter() {
     $my_mock = new Amok('Thingy');
     $passed_mock = new Amok('More stuff');
 
